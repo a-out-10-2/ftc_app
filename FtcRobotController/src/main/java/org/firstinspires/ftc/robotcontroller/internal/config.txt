@@ -1,0 +1,14 @@
+Capital Hill
+
+# group = "Pushbot"
+
+	- Motor Controller 1 (AL00VT01)
+    	1) "left_arm"
+
+	- Servo Controler 2 (AL00XOPU)
+		1) "left_hand"
+		2) "right_hand"
+
+	- Motor Controller 3 (AL00VW0R)
+		1) "left_drive"
+		2) "right_drive"
