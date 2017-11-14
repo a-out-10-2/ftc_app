@@ -52,7 +52,7 @@ import org.firstinspires.ftc.robotcontroller.internal.HardwarePushbot;
  */
 
 @TeleOp(name="Pushbot: Teleop Tank", group="Pushbot")
-@Disabled
+//@Disabled
 public class PushbotTeleopTank_Iterative extends OpMode{
 
     /* Declare OpMode members. */
