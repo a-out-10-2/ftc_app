@@ -57,8 +57,10 @@ public class PushbotTeleopPOV_Linear extends LinearOpMode {
     /* Declare OpMode members. */
     HardwarePushbot robot           = new HardwarePushbot();   // Use a Pushbot's hardware
                                                                // could also use HardwarePushbotMatrix class.
-    double          clawOffset      = 0;                       // Servo mid position
-    final double    CLAW_SPEED      = 0.02 ;                   // sets rate to move servo
+    double          clawOffset      = -0.5;                       // Servo mid position
+    final double    CLAW_SPEED      = 0.05 ;                   // sets rate to move servo
+
+    final double    ARM_SPEED       = 0.5;                     // constant speed applied to arm
 
     @Override
     public void runOpMode() {
@@ -106,8 +108,8 @@ public class PushbotTeleopPOV_Linear extends LinearOpMode {
             robot.rightDrive.setPower(right);
 
             // Use gamepad left & right Bumpers to open and close the claw
-            if (gamepad1.right_bumper)
-                clawOffset += CLAW_SPEED;
+            if (gamepad1.left_trigger > 0)
+                clawOffset += gamepad1.left_trigger / 10;
             else if (gamepad1.left_bumper)
                 clawOffset -= CLAW_SPEED;
 
@@ -117,17 +119,31 @@ public class PushbotTeleopPOV_Linear extends LinearOpMode {
             robot.rightClaw.setPosition(robot.MID_SERVO - clawOffset);
 
             // Use gamepad buttons to move arm up (Y) and down (A)
-            if (gamepad1.y)
-                robot.leftArm.setPower(robot.ARM_UP_POWER);
-            else if (gamepad1.a)
-                robot.leftArm.setPower(robot.ARM_DOWN_POWER);
-            else
+//            if ((gamepad1.left_trigger > 0 && gamepad1.right_trigger > 0) || (gamepad1.left_trigger <= 0 && gamepad1.right_trigger <= 0))
+//                robot.leftArm.setPower(0.0);
+//            else if (gamepad1.right_trigger > 0)
+//                robot.leftArm.setPower(gamepad1.right_trigger);
+//            else if (gamepad1.left_trigger > 0)
+//                robot.leftArm.setPower(-gamepad1.left_trigger);
+
+            // edge-cases, shut-off
+            if ((gamepad1.right_bumper == true && gamepad1.right_trigger > 0) || (gamepad1.right_bumper == false && gamepad1.right_trigger <= 0))
                 robot.leftArm.setPower(0.0);
+
+            else if (gamepad1.right_trigger > 0)
+                robot.leftArm.setPower(gamepad1.right_trigger);
+
+            else if (gamepad1.right_bumper == true)
+                robot.leftArm.setPower(-ARM_SPEED);
+
+
 
             // Send telemetry message to signify robot running;
             telemetry.addData("claw",  "Offset = %.2f", clawOffset);
-            telemetry.addData("left",  "%.2f", left);
-            telemetry.addData("right", "%.2f", right);
+            telemetry.addData("left drive",  "%.2f", left);
+            telemetry.addData("right drive", "%.2f", right);
+            telemetry.addData("left trigger", "%.2f", gamepad1.left_trigger);
+            telemetry.addData("right trigger", "%.2f", gamepad1.right_trigger);
             telemetry.update();
 
             // Pace this loop so jaw action is reasonable speed.
